@@ -159,9 +159,3 @@ def plot_confusion_matrix(pred, truth):
         idx = (confusion_matrix == 0)
         confusion_matrix[idx] = np.nan
         sns.heatmap(confusion_matrix, annot=True, ax=sub, linewidths=0.5, linecolor='lightgray', cbar=False)
-
-def gpu_available():
-    return torch.backends.mps.is_available()
-
-def get_device():
-    return torch.device("mps") if gpu_available() else torch.device("cpu")

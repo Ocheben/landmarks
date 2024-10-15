@@ -1,75 +1,61 @@
 import torch
 import torch.nn as nn
 
-
-# define the CNN architecture
 class MyModel(nn.Module):
     def __init__(self, num_classes: int = 1000, dropout: float = 0.7) -> None:
-
         super().__init__()
 
-        # YOUR CODE HERE
-        # Define a CNN architecture. Remember to use the variable num_classes
-        # to size appropriately the output of your classifier, and if you use
-        # the Dropout layer, use the variable "dropout" to indicate how much
-        # to use (like nn.Dropout(p=dropout))
+        # Define the feature extraction layers
         self.features = nn.Sequential(
             # First Convolutional Block
             nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(64),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2, stride=2), 
+            nn.MaxPool2d(kernel_size=2, stride=2),  # Reduces spatial dimensions by half
 
-            # Second Convulotional Block
+            # Second Convolutional Block
             nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(128),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.MaxPool2d(kernel_size=2, stride=2),  # Reduces spatial dimensions by half
 
             # Third Convolutional Block
             nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.MaxPool2d(kernel_size=2, stride=2),  # Reduces spatial dimensions by half
 
             # Fourth Convolutional Block
             nn.Conv2d(in_channels=256, out_channels=512, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(512),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            )
-
-        # adaptive average pooling
-        self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-
-        # Final fully coneected layer for classification of features
-        self.classifier = nn.Sequential(
-            nn.Dropout(p=dropout), # Prevent overfitting
-            nn.Linear(512, 256), # Reduce dimensions
-            nn.ReLU(inplace=True),
-            nn.Dropout(p=dropout),
-            nn.Linear(256, num_classes) # Final output layer with predictedd
+            nn.MaxPool2d(kernel_size=2, stride=2)   # Reduces spatial dimensions by half
         )
 
+        # Adaptive pooling to reduce feature map size to (1, 1)
+        self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
 
+        # Define the classifier layers
+        self.classifier = nn.Sequential(
+            nn.Dropout(p=dropout),  # Dropout to prevent overfitting
+            nn.Linear(512, 256),    # Reduce to a smaller dimensional space
+            nn.ReLU(inplace=True),
+            nn.Dropout(p=dropout),
+            nn.Linear(256, num_classes)  # Final output layer
+        )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # YOUR CODE HERE: process the input tensor through the
-        # feature extractor, the pooling and the final linear
-        # layers (if appropriate for the architecture chosen)
-        
-        # Extract feature
+        # Feature extraction
         x = self.features(x)
-
+        
         # Global Average Pooling
-        x = self.avg_pool(x)
+        x = self.global_avg_pool(x)
 
-        # Flatten tensor for fully connected layer
+        # Flatten the tensor before the fully connected layers
         x = x.view(x.size(0), -1)
-
-        # Classifer
+        
+        # Classifier
         x = self.classifier(x)
-
         return x
 
 

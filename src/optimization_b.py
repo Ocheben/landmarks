@@ -3,20 +3,27 @@ import torch.nn as nn
 import torch.optim
 
 
-def get_loss():
+import torch
+import torch.nn as nn
+import torch.optim
+
+def get_loss(use_mps=False):
     """
     Get an instance of the CrossEntropyLoss (useful for classification),
-    optionally moving it to the GPU if use_cuda is set to True
+    optionally moving it to the MPS (Apple's GPU) if use_mps is set to True
     """
 
+    # CrossEntropyLoss is commonly used for classification tasks
     loss = nn.CrossEntropyLoss()
-    if torch.backends.mps.is_available():
-        loss = loss.to(torch.device("mps"))
-    else:
-        print("GPU unavailable")
+
+    # If using the Apple Silicon GPU, move the loss function to the GPU
+    if use_mps:
+        if torch.backends.mps.is_available():
+            loss = loss.to(torch.device("mps"))
+        else:
+            print("MPS is not available. Using CPU instead.")
 
     return loss
-
 
 def get_optimizer(
     model: nn.Module,
@@ -24,46 +31,43 @@ def get_optimizer(
     learning_rate: float = 0.01,
     momentum: float = 0.5,
     weight_decay: float = 0,
+    use_mps=False
 ):
     """
-    Returns an optimizer instance0
+    Returns an optimizer instance, with optional support for the MPS backend on macOS.
 
     :param model: the model to optimize
     :param optimizer: one of 'SGD' or 'Adam'
     :param learning_rate: the learning rate
     :param momentum: the momentum (if the optimizer uses it)
     :param weight_decay: regularization coefficient
+    :param use_mps: whether to use the MPS backend on macOS
     """
-    # Move model to GPU if available
-    device = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
-
+    device = torch.device("mps") if use_mps and torch.backends.mps.is_available() else torch.device("cpu")
+    
+    # Move the model to the appropriate device (MPS or CPU)
     model.to(device)
 
     if optimizer.lower() == "sgd":
-        # create an instance of the SGD
-        # optimizer. Use the input parameters learning_rate, momentum
-        # and weight_decay
+        # Create an instance of the SGD optimizer
         opt = torch.optim.SGD(
             model.parameters(),
             lr=learning_rate,
             momentum=momentum,
-            weight_decay=weight_decay
+            weight_decay=weight_decay,
         )
 
     elif optimizer.lower() == "adam":
-        # create an instance of the Adam
-        # optimizer. Use the input parameters learning_rate, momentum
-        # and weight_decay
+        # Create an instance of the Adam optimizer
         opt = torch.optim.Adam(
             model.parameters(),
             lr=learning_rate,
-            weight_decay=weight_decay
+            weight_decay=weight_decay,
         )
     else:
         raise ValueError(f"Optimizer {optimizer} not supported")
 
     return opt
-
 
 ######################################################################################
 #                                     TESTS
