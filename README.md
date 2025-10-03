@@ -4,55 +4,8 @@ Photo sharing and photo storage services like to have location data for each pho
 
 If no location metadata for an image is available, one way to infer the location is to detect and classify a discernable landmark in the image. Given the large number of landmarks across the world and the immense volume of images that are uploaded to photo sharing services, using human judgement to classify these landmarks would not be feasible.
 
-In this project, you will take the first steps towards addressing this problem by building a CNN-powered app to automatically predict the location of the image based on any landmarks depicted in the image. At the end of this project, your app will accept any user-supplied image as input and suggest the top k most relevant landmarks from 50 possible landmarks from across the world.
+In this project, this problem is addressed by building a CNN-powered app to automatically predict the location of the image based on any landmarks depicted in the image. The app accepts any user-supplied image as input and suggest the top k most relevant landmarks from 50 possible landmarks from across the world.
 
-
-### Getting started
-
-#### Setting up locally
-
-This setup requires a bit of familiarity with creating a working deep learning environment. While things should work out of the box, in case of problems you might have to do operations on your system (like installing new NVIDIA drivers) that are not covered in the class. Please do this if you are at least a bit familiar with these subjects, otherwise please consider using the provided Udacity workspace that you find in the classroom.
-
-1. Open a terminal and clone the repository, then navigate to the downloaded folder:
-	
-	```	
-		git clone https://github.com/udacity/cd1821-CNN-project-starter.git
-		cd cd1821-CNN-project-starter
-	```
-    
-2. Create a new conda environment with python 3.7.6:
-
-    ```
-        conda create --name udacity_cnn_project -y python=3.7.6
-        conda activate udacity_cnn_project
-    ```
-    
-    NOTE: you will have to execute `conda activate udacity_cnn_project` for every new terminal session.
-    
-3. Install the requirements of the project:
-
-    ```
-        pip install -r requirements.txt
-    ```
-
-4. Install and open Jupyter lab:
-	
-	```
-        pip install jupyterlab
-		jupyter lab
-	```
-
-### Developing your project
-
-Now that you have a working environment, execute the following steps:
-
->**Note:** Complete the following notebooks in order, do not move to the next step if you didn't complete the previous one.
-
-1. Open the `cnn_from_scratch.ipynb` notebook and follow the instructions there
-2. Open `transfer_learning.ipynb` and follow the instructions
-3. Open `app.ipynb` and follow the instructions there
-
-Click on the "Submit Project" button in the classroom and follow the instructions to submit!
 
 ## Dataset Info
 
